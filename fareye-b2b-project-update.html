@@ -189,12 +189,14 @@
             line-height: 1.5;
         }
 
-        .milestone-table tbody td:first-child strong {
+        /* Project names with rowspan get the brand color */
+        .milestone-table tbody td[rowspan] strong {
             color: #9e1f63;
             font-weight: 700;
         }
 
-        .milestone-table tbody td:not(:first-child) strong {
+        /* All other strong text in the table should be black */
+        .milestone-table tbody td:not([rowspan]) strong {
             color: #1a1a1a !important;
             font-weight: 600;
         }
