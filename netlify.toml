@@ -1,9 +1,8 @@
 # Simple Netlify Configuration that works
 
 [build]
-  # Since we're deploying static HTML + serverless functions
-  # We'll copy files to dist directory
-  command = "mkdir -p dist && cp *.html dist/ && cp *.js dist/ && cp -r backend dist/"
+  # Build command that copies all necessary files including browser SQLite implementation
+  command = "mkdir -p dist && cp *.html dist/ && cp *.js dist/ && cp -r src dist/ && cp -r backend dist/"
   publish = "dist"
 
   # Skip functions for now to get basic deployment working
@@ -29,3 +28,16 @@
   for = "/*.css"
   [headers.values]
     Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Enable CORS for SQLite WASM worker
+[[headers]]
+  for = "/src/database/workers/*"
+  [headers.values]
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Opener-Policy = "same-origin"
