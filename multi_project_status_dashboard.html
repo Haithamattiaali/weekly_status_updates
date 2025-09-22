@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROCEED® Executive Project Status Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', Verdana, Arial, sans-serif;
+            background: linear-gradient(135deg, #f2f2f4 0%, #e2e1e6 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #424046 0%, #2d2d2d 100%);
+            color: #ffffff;
+            padding: 30px;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 10px 30px rgba(66, 64, 70, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(158, 31, 99, 0.3));
+            transform: skewX(-15deg);
+        }
+
+        .dashboard-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .dashboard-subtitle {
+            font-size: 16px;
+            color: #cb5b96;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-range-selector {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 2;
+        }
+
+        .date-range-selector select {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .executive-summary {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #424046;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #9e1f63;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .portfolio-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #9e1f63;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #6a686f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #424046;
+        }
+
+        .metric-trend {
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .projects-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .project-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e2e1e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #424046;
+        }
+
+        .project-status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-green {
+            background: linear-gradient(135deg, #2D8A54, #228B22);
+            color: white;
+        }
+
+        .status-amber {
+            background: linear-gradient(135deg, #FFA500, #FF8C00);
+            color: white;
+        }
+
+        .status-red {
+            background: linear-gradient(135deg, #DC143C, #8B0000);
+            color: white;
+        }
+
+        .status-blue {
+            background: linear-gradient(135deg, #4169E1, #1E90FF);
+            color: white;
+        }
+
+        .status-grey {
+            background: linear-gradient(135deg, #808080, #696969);
+            color: white;
+        }
+
+        .trend-indicator {
+            margin-left: 8px;
+            font-size: 16px;
+        }
+
+        .project-body {
+            padding: 20px;
+        }
+
+        .comparison-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .period-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e2e1e6;
+        }
+
+        .period-label {
+            font-size: 12px;
+            color: #6a686f;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .period-metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .small-metric {
+            text-align: center;
+        }
+
+        .small-metric-label {
+            font-size: 10px;
+            color: #999;
+        }
+
+        .small-metric-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #424046;
+        }
+
+        .highlights-lowlights {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .hl-section {
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .highlights-section {
+            border-left: 4px solid #2D8A54;
+        }
+
+        .lowlights-section {
+            border-left: 4px solid #DC143C;
+        }
+
+        .hl-title {
+            font-weight: 600;
+            color: #424046;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hl-item {
+            font-size: 13px;
+            color: #6a686f;
+            padding: 5px 0;
+            padding-left: 15px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .hl-item::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+        }
+
+        .highlights-section .hl-item::before {
+            color: #2D8A54;
+        }
+
+        .lowlights-section .hl-item::before {
+            color: #DC143C;
+        }
+
+        .milestones-section {
+            margin-top: 20px;
+        }
+
+        .milestones-title {
+            font-weight: 600;
+            color: #424046;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .milestone-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+        }
+
+        .milestone-table thead {
+            background: linear-gradient(135deg, #9e1f63, #721548);
+            color: white;
+        }
+
+        .milestone-table th {
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .milestone-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .milestone-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e1e6;
+            color: #424046;
+        }
+
+        .milestone-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-pending {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-at-risk {
+            background: #f5c6cb;
+            color: #721c24;
+        }
+
+        .health-indicators {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .health-indicator {
+            flex: 1;
+            text-align: center;
+        }
+
+        .health-label {
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .health-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .health-good {
+            color: #2D8A54;
+        }
+
+        .health-warning {
+            color: #FFA500;
+        }
+
+        .health-critical {
+            color: #DC143C;
+        }
+
+        .export-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #9e1f63, #721548);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(158, 31, 99, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(158, 31, 99, 0.4);
+        }
+
+        .footer {
+            background: #424046;
+            color: #e2e1e6;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 0 0 12px 12px;
+            font-size: 12px;
+        }
+
+        .brand-mark {
+            display: inline-block;
+            background: #9e1f63;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">PROCEED® Portfolio Status Dashboard</h1>
+            <p class="dashboard-subtitle">Executive Multi-Project Health Monitor</p>
+            <div class="date-range-selector">
+                <select id="dateRangeSelector">
+                    <option value="7">Last 7 Days Comparison</option>
+                    <option value="14">Last 14 Days Comparison</option>
+                    <option value="30">Last 30 Days Comparison</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="executive-summary">
+            <h2 class="summary-title">Portfolio Executive Summary</h2>
+            <div class="portfolio-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Total Projects</div>
+                    <div class="metric-value">5</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Green Status</div>
+                    <div class="metric-value">2<span class="metric-trend">↑</span></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Amber Status</div>
+                    <div class="metric-value">2<span class="metric-trend">→</span></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Red Status</div>
+                    <div class="metric-value">1<span class="metric-trend">↓</span></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Portfolio Health</div>
+                    <div class="metric-value">68%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="projects-grid">
+            <!-- Project 1: FarEye B2B -->
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-name">FAREYE B2B Transportation Integration</div>
+                    <div class="project-status-badge status-amber">
+                        Amber
+                        <span class="trend-indicator">↓</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <div class="comparison-section">
+                        <div class="period-box">
+                            <div class="period-label">Current Period (Sept 11-17)</div>
+                            <div class="period-metrics">
+                                <div class="small-metric">
+                                    <div class="small-metric-label">SPI</div>
+                                    <div class="small-metric-value">0.95</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">CPI</div>
+                                    <div class="small-metric-value">0.98</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Issues</div>
+                                    <div class="small-metric-value">30</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Risks</div>
+                                    <div class="small-metric-value">3</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="period-box">
+                            <div class="period-label">Previous Period (Sept 3-10)</div>
+                            <div class="period-metrics">
+                                <div class="small-metric">
+                                    <div class="small-metric-label">SPI</div>
+                                    <div class="small-metric-value">1.02</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">CPI</div>
+                                    <div class="small-metric-value">1.01</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Issues</div>
+                                    <div class="small-metric-value">15</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Risks</div>
+                                    <div class="small-metric-value">2</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="highlights-lowlights">
+                        <div class="hl-section highlights-section">
+                            <div class="hl-title">Highlights</div>
+                            <div class="hl-item">Sprint 1 demo completed successfully (Sept 2)</div>
+                            <div class="hl-item">Master data setup 75% complete (981 customers)</div>
+                            <div class="hl-item">Vehicle inspection workflow implemented</div>
+                            <div class="hl-item">KML geofencing configured for Sudair hub</div>
+                        </div>
+                        <div class="hl-section lowlights-section">
+                            <div class="hl-title">Lowlights</div>
+                            <div class="hl-item">30+ UAT issues pending classification (SPI 0.95)</div>
+                            <div class="hl-item">API limited to single order creation</div>
+                            <div class="hl-item">Customer coordinates incomplete</div>
+                            <div class="hl-item">SMS/Email templates not provided</div>
+                        </div>
+                    </div>
+
+                    <div class="milestones-section">
+                        <div class="milestones-title">Key Milestones - FAREYE B2B</div>
+                        <table class="milestone-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%">Milestone</th>
+                                    <th style="width: 20%">Owner</th>
+                                    <th style="width: 20%">Due Date</th>
+                                    <th style="width: 15%">Status</th>
+                                    <th style="width: 15%">Health</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sprint 1 Demo</td>
+                                    <td>Nischal/Ismail</td>
+                                    <td>02-Sep</td>
+                                    <td><span class="milestone-status status-completed">Completed</span></td>
+                                    <td><span class="health-good">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>UAT Testing</td>
+                                    <td>Ismail Farhan</td>
+                                    <td>30-Sep</td>
+                                    <td><span class="milestone-status status-in-progress">In Progress</span></td>
+                                    <td><span class="health-warning">⚠</span></td>
+                                </tr>
+                                <tr>
+                                    <td>API Integration</td>
+                                    <td>Nischal/Haitham</td>
+                                    <td>25-Sep</td>
+                                    <td><span class="milestone-status status-at-risk">At Risk</span></td>
+                                    <td><span class="health-critical">✗</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Master Data Setup</td>
+                                    <td>Mohammed Tatar</td>
+                                    <td>30-Sep</td>
+                                    <td><span class="milestone-status status-in-progress">75%</span></td>
+                                    <td><span class="health-warning">⚠</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="health-indicators">
+                        <div class="health-indicator">
+                            <div class="health-label">Schedule</div>
+                            <div class="health-value health-warning">0.95</div>
+                        </div>
+                        <div class="health-indicator">
+                            <div class="health-label">Cost</div>
+                            <div class="health-value health-good">0.98</div>
+                        </div>
+                        <div class="health-indicator">
+                            <div class="health-label">Quality</div>
+                            <div class="health-value health-critical">30</div>
+                        </div>
+                        <div class="health-indicator">
+                            <div class="health-label">Risk</div>
+                            <div class="health-value health-warning">3H</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2: Warehouse Automation -->
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-name">Warehouse Automation Phase 2</div>
+                    <div class="project-status-badge status-green">
+                        Green
+                        <span class="trend-indicator">↑</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <div class="comparison-section">
+                        <div class="period-box">
+                            <div class="period-label">Current Period (Sept 11-17)</div>
+                            <div class="period-metrics">
+                                <div class="small-metric">
+                                    <div class="small-metric-label">SPI</div>
+                                    <div class="small-metric-value">1.05</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">CPI</div>
+                                    <div class="small-metric-value">1.08</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Issues</div>
+                                    <div class="small-metric-value">2</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Risks</div>
+                                    <div class="small-metric-value">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="period-box">
+                            <div class="period-label">Previous Period (Sept 3-10)</div>
+                            <div class="period-metrics">
+                                <div class="small-metric">
+                                    <div class="small-metric-label">SPI</div>
+                                    <div class="small-metric-value">1.01</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">CPI</div>
+                                    <div class="small-metric-value">1.02</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Issues</div>
+                                    <div class="small-metric-value">5</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Risks</div>
+                                    <div class="small-metric-value">1</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="highlights-lowlights">
+                        <div class="hl-section highlights-section">
+                            <div class="hl-title">Highlights</div>
+                            <div class="hl-item">Ahead of schedule by 5% (SPI 1.05)</div>
+                            <div class="hl-item">Cost savings of 8% achieved (CPI 1.08)</div>
+                            <div class="hl-item">Zero critical defects in testing</div>
+                            <div class="hl-item">All high risks successfully mitigated</div>
+                        </div>
+                        <div class="hl-section lowlights-section">
+                            <div class="hl-title">Lowlights</div>
+                            <div class="hl-item">Minor integration issues with legacy systems</div>
+                            <div class="hl-item">Training materials delayed by 2 days</div>
+                        </div>
+                    </div>
+
+                    <div class="milestones-section">
+                        <div class="milestones-title">Key Milestones - Warehouse Automation</div>
+                        <table class="milestone-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%">Milestone</th>
+                                    <th style="width: 20%">Owner</th>
+                                    <th style="width: 20%">Due Date</th>
+                                    <th style="width: 15%">Status</th>
+                                    <th style="width: 15%">Health</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>System Design Complete</td>
+                                    <td>Tech Team</td>
+                                    <td>01-Sep</td>
+                                    <td><span class="milestone-status status-completed">Completed</span></td>
+                                    <td><span class="health-good">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Hardware Installation</td>
+                                    <td>Operations</td>
+                                    <td>15-Sep</td>
+                                    <td><span class="milestone-status status-completed">Completed</span></td>
+                                    <td><span class="health-good">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Integration Testing</td>
+                                    <td>QA Team</td>
+                                    <td>25-Sep</td>
+                                    <td><span class="milestone-status status-in-progress">In Progress</span></td>
+                                    <td><span class="health-good">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Go-Live</td>
+                                    <td>All Teams</td>
+                                    <td>01-Oct</td>
+                                    <td><span class="milestone-status status-pending">Pending</span></td>
+                                    <td><span class="health-good">✓</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="health-indicators">
+                        <div class="health-indicator">
+                            <div class="health-label">Schedule</div>
+                            <div class="health-value health-good">1.05</div>
+                        </div>
+                        <div class="health-indicator">
+                            <div class="health-label">Cost</div>
+                            <div class="health-value health-good">1.08</div>
+                        </div>
+                        <div class="health-indicator">
+                            <div class="health-label">Quality</div>
+                            <div class="health-value health-good">0</div>
+                        </div>
+                        <div class="health-indicator">
+                            <div class="health-label">Risk</div>
+                            <div class="health-value health-good">0H</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 3: Digital Transformation -->
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-name">Digital Transformation Initiative</div>
+                    <div class="project-status-badge status-red">
+                        Red
+                        <span class="trend-indicator">↓</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <div class="comparison-section">
+                        <div class="period-box">
+                            <div class="period-label">Current Period (Sept 11-17)</div>
+                            <div class="period-metrics">
+                                <div class="small-metric">
+                                    <div class="small-metric-label">SPI</div>
+                                    <div class="small-metric-value">0.85</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">CPI</div>
+                                    <div class="small-metric-value">0.88</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Issues</div>
+                                    <div class="small-metric-value">45</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Risks</div>
+                                    <div class="small-metric-value">5</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="period-box">
+                            <div class="period-label">Previous Period (Sept 3-10)</div>
+                            <div class="period-metrics">
+                                <div class="small-metric">
+                                    <div class="small-metric-label">SPI</div>
+                                    <div class="small-metric-value">0.92</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">CPI</div>
+                                    <div class="small-metric-value">0.95</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Issues</div>
+                                    <div class="small-metric-value">38</div>
+                                </div>
+                                <div class="small-metric">
+                                    <div class="small-metric-label">Risks</div>
+                                    <div class="small-metric-value">4</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="highlights-lowlights">
+                        <div class="hl-section highlights-section">
+                            <div class="hl-title">Highlights</div>
+                            <div class="hl-item">Vendor contract renegotiated saving 12%</div>
+                            <div class="hl-item">Key stakeholder approval obtained</div>
+                        </div>
+                        <div class="hl-section lowlights-section">
+                            <div class="hl-title">Lowlights</div>
+                            <div class="hl-item">15% schedule slippage on critical path (SPI 0.85)</div>
+                            <div class="hl-item">12% cost overrun requiring escalation (CPI 0.88)</div>
+                            <div class="hl-item">Resource gap - 3 key positions unfilled</div>
+                            <div class="hl-item">Vendor delivery delay impacting timeline</div>
+                            <div class="hl-item">5 high-risk items need mitigation</div>
+                        </div>
+                    </div>
+
+                    <div class="milestones-section">
+                        <div class="milestones-title">Key Milestones - Digital Transformation</div>
+                        <table class="milestone-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%">Milestone</th>
+                                    <th style="width: 20%">Owner</th>
+                                    <th style="width: 20%">Due Date</th>
+                                    <th style="width: 15%">Status</th>
+                                    <th style="width: 15%">Health</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Requirements Gathering</td>
+                                    <td>Business Team</td>
+                                    <td>15-Aug</td>
+                                    <td><span class="milestone-status status-completed">Completed</span></td>
+                                    <td><span class="health-good">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Platform Selection</td>
+                                    <td>Architecture</td>
+                                    <td>01-Sep</td>
+                                    <td><span class="milestone-status status-at-risk">Delayed</span></td>
+                                    <td><span class="health-critical">✗</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Pilot Implementation</td>
+                                    <td>Tech Team</td>
+                                    <td>20-Sep</td>
+                                    <td><span class="milestone-status status-at-risk">At Risk</span></td>
+                                    <td><span class="health-critical">✗</span></td>
+                                </tr>
+                                <tr>
+                                    <td>User Training</td>
+                                    <td>HR Team</td>
+                                    <td>15-Oct</td>
+                                    <td><span class="milestone-status status-pending">Pending</span></td>
+                                    <td><span class="health-warning">⚠</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="health-indicators">
+                        <div class="health-indicator">
+                            <div class="health-label">Schedule</div>
+                            <div class="health-value health-critical">0.85</div>
+                        </div>
+                        <div class="health-indicator">
+                            <div class="health-label">Cost</div>
+                            <div class="health-value health-critical">0.88</div>
+                        </div>
+                        <div class="health-indicator">
+                            <div class="health-label">Quality</div>
+                            <div class="health-value health-critical">45</div>
+                        </div>
+                        <div class="health-indicator">
+                            <div class="health-label">Risk</div>
+                            <div class="health-value health-critical">5H</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="export-controls">
+            <button class="export-btn" onclick="exportDashboard()">Export Report</button>
+        </div>
+
+        <div class="footer">
+            <span class="brand-mark">PROCEED®</span>
+            <span>Executive Portfolio Dashboard | Generated: <span id="currentDateTime"></span></span>
+        </div>
+    </div>
+
+    <script>
+        // Set current date/time
+        document.getElementById('currentDateTime').textContent = new Date().toLocaleString();
+
+        // Export functionality
+        function exportDashboard() {
+            // Prepare data for export
+            const dashboardData = {
+                generatedAt: new Date().toISOString(),
+                dateRange: document.getElementById('dateRangeSelector').value,
+                projects: [
+                    {
+                        name: 'FAREYE B2B Transportation Integration',
+                        status: 'amber',
+                        trend: 'down',
+                        currentMetrics: {spi: 0.95, cpi: 0.98, issues: 30, risks: 3},
+                        previousMetrics: {spi: 1.02, cpi: 1.01, issues: 15, risks: 2}
+                    },
+                    {
+                        name: 'Warehouse Automation Phase 2',
+                        status: 'green',
+                        trend: 'up',
+                        currentMetrics: {spi: 1.05, cpi: 1.08, issues: 2, risks: 0},
+                        previousMetrics: {spi: 1.01, cpi: 1.02, issues: 5, risks: 1}
+                    },
+                    {
+                        name: 'Digital Transformation Initiative',
+                        status: 'red',
+                        trend: 'down',
+                        currentMetrics: {spi: 0.85, cpi: 0.88, issues: 45, risks: 5},
+                        previousMetrics: {spi: 0.92, cpi: 0.95, issues: 38, risks: 4}
+                    }
+                ]
+            };
+
+            // Create download
+            const dataStr = JSON.stringify(dashboardData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+            const exportFileDefaultName = `portfolio_status_${new Date().toISOString().split('T')[0]}.json`;
+
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        // Date range selector handler
+        document.getElementById('dateRangeSelector').addEventListener('change', function() {
+            const days = this.value;
+            console.log(`Updating comparison to ${days} days`);
+            // In production, this would trigger data refresh
+        });
+    </script>
+</body>
+</html>

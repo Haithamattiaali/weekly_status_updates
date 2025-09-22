@@ -1,0 +1,448 @@
+{
+  "project": {
+    "name": "FAREYE B2B Transportation Integration",
+    "period": {
+      "start": "2025-09-03",
+      "end": "2025-09-17",
+      "days": 15
+    },
+    "generatedAt": "2025-09-17T12:00:00Z"
+  },
+  "executive_summary": "The FarEye B2B Transportation Integration project has made significant progress in Sprint 1 with successful demo completion and UAT initiation. Critical challenges identified include API integration limitations for bulk order processing and master data gaps affecting route optimization. The project requires immediate attention on UAT issue resolution with 30+ open items requiring classification and timeline establishment.",
+  "milestones": [
+    {
+      "title": "Sprint 1 Demo Completion",
+      "status": "completed",
+      "completedDate": "2025-09-02",
+      "description": "Successfully demonstrated core B2B functionalities including master data management, vehicle inspection workflow, and order management capabilities",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3RQTYDB7216JMAET83XV3QK",
+          "title": "FarEye B2B-Sprint1 - DEMO session",
+          "date": "2025-09-02",
+          "url": "https://app.fireflies.ai/view/01K3RQTYDB7216JMAET83XV3QK"
+        }
+      ]
+    },
+    {
+      "title": "UAT Testing Initiation",
+      "status": "in-progress",
+      "targetDate": "2025-09-30",
+      "description": "UAT testing underway with 30+ issues identified and tracked. Business team provided access credentials and testing ongoing",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "title": "Master Data Setup",
+      "status": "in-progress",
+      "targetDate": "2025-09-30",
+      "description": "Customer Master completed with 981 customers. Warehouse and Fleet Master configured. Customer coordinates collection ongoing",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3RQTYDB7216JMAET83XV3QK",
+          "title": "FarEye B2B-Sprint1 - DEMO session",
+          "date": "2025-09-02",
+          "url": "https://app.fireflies.ai/view/01K3RQTYDB7216JMAET83XV3QK"
+        }
+      ]
+    },
+    {
+      "title": "API Integration Development",
+      "status": "at-risk",
+      "targetDate": "2025-09-25",
+      "description": "API integration facing challenges with bulk order creation. FarEye system only supports single order creation, complicating label printing operations",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "title": "Geofencing Configuration",
+      "status": "completed",
+      "completedDate": "2025-09-02",
+      "description": "KML geofencing zones established for Riyadh hub with multiple delivery zones for enhanced routing efficiency",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K471H6WASF95TD2PE6RC9M4W",
+          "title": "FarEye B2B-Sprint1 - DEMO session (Continue)",
+          "date": "2025-09-03",
+          "url": "https://app.fireflies.ai/view/01K471H6WASF95TD2PE6RC9M4W"
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "title": "UAT Testing Delays",
+      "severity": "high",
+      "description": "30+ UAT issues remain open without clear ETAs or classification. Risk of project timeline slippage if not addressed immediately",
+      "mitigation": "Daily tracking of UAT issues, classification of issues by type, and establishment of clear resolution timelines",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "title": "API Bulk Processing Limitation",
+      "severity": "medium",
+      "description": "FarEye API doesn't support bulk order creation, requiring synchronous single-order processing which may impact system performance",
+      "mitigation": "Technical call scheduled to explore asynchronous processing and batch handling alternatives",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "title": "Master Data Gaps",
+      "severity": "medium",
+      "description": "Customer latitude/longitude coordinates still being collected. SMS/email templates pending from business team",
+      "mitigation": "Mohammed Tatar committed to providing coordinates by month-end and communication templates",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3RQTYDB7216JMAET83XV3QK",
+          "title": "FarEye B2B-Sprint1 - DEMO session",
+          "date": "2025-09-02",
+          "url": "https://app.fireflies.ai/view/01K3RQTYDB7216JMAET83XV3QK"
+        }
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Bulk API Creation Not Supported",
+      "owner": "Nischal Bharadwaj",
+      "eta": "2025-09-20",
+      "description": "FarEye standard API doesn't support bulk consignment creation, affecting SAP integration approach",
+      "resolution": "Separate technical call scheduled to discuss alternatives including asynchronous processing",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "title": "Customer Location Data Incomplete",
+      "owner": "Mohammed Tatar",
+      "eta": "2025-09-30",
+      "description": "Customer longitude and latitude data collection in progress, required for effective route planning",
+      "resolution": "Data collection ongoing with commitment to complete by month-end",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3GPH1SG1J5A5KTK52KGBBB2",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-05",
+          "url": "https://app.fireflies.ai/view/01K3GPH1SG1J5A5KTK52KGBBB2"
+        }
+      ]
+    }
+  ],
+  "kpis": [
+    {
+      "metric": "UAT Issues Identified",
+      "value": 30,
+      "trend": "up",
+      "period": "week",
+      "target": 0,
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "metric": "Master Data Completeness",
+      "value": 75,
+      "trend": "up",
+      "period": "week",
+      "unit": "percentage",
+      "target": 100,
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3RQTYDB7216JMAET83XV3QK",
+          "title": "FarEye B2B-Sprint1 - DEMO session",
+          "date": "2025-09-02",
+          "url": "https://app.fireflies.ai/view/01K3RQTYDB7216JMAET83XV3QK"
+        }
+      ]
+    },
+    {
+      "metric": "Customer Records Loaded",
+      "value": 981,
+      "trend": "flat",
+      "period": "total",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3RQTYDB7216JMAET83XV3QK",
+          "title": "FarEye B2B-Sprint1 - DEMO session",
+          "date": "2025-09-02",
+          "url": "https://app.fireflies.ai/view/01K3RQTYDB7216JMAET83XV3QK"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Manual label printing approach adopted",
+      "date": "2025-09-15",
+      "madeBy": "Haitham Attia",
+      "rationale": "Due to API limitations, team will use planning cockpit filters to print labels by vehicle/driver to avoid operational chaos",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "decision": "Mandatory vehicle inspection implementation",
+      "date": "2025-09-02",
+      "madeBy": "Business Team",
+      "rationale": "All vehicles require inspection before loading with 24-hour validity period for active status",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K471H6WASF95TD2PE6RC9M4W",
+          "title": "FarEye B2B-Sprint1 - DEMO session (Continue)",
+          "date": "2025-09-03",
+          "url": "https://app.fireflies.ai/view/01K471H6WASF95TD2PE6RC9M4W"
+        }
+      ]
+    },
+    {
+      "decision": "Sudair hub to replace Riyadh as primary",
+      "date": "2025-09-02",
+      "madeBy": "Operations Team",
+      "rationale": "Enhanced coverage across Saudi Arabia with multiple geofences for optimized routing",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3RQTYDB7216JMAET83XV3QK",
+          "title": "FarEye B2B-Sprint1 - DEMO session",
+          "date": "2025-09-02",
+          "url": "https://app.fireflies.ai/view/01K3RQTYDB7216JMAET83XV3QK"
+        }
+      ]
+    }
+  ],
+  "action_items": [
+    {
+      "task": "Classify all UAT issues and provide ETAs",
+      "owner": "Nischal Bharadwaj",
+      "dueDate": "2025-09-18",
+      "priority": "high",
+      "status": "pending",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "task": "Provide customer latitude/longitude coordinates",
+      "owner": "Mohammed Tatar",
+      "dueDate": "2025-09-30",
+      "priority": "high",
+      "status": "in-progress",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3RQTYDB7216JMAET83XV3QK",
+          "title": "FarEye B2B-Sprint1 - DEMO session",
+          "date": "2025-09-02",
+          "url": "https://app.fireflies.ai/view/01K3RQTYDB7216JMAET83XV3QK"
+        }
+      ]
+    },
+    {
+      "task": "Schedule technical call for bulk API discussion",
+      "owner": "Syed Zeeshan Mustafa",
+      "dueDate": "2025-09-20",
+      "priority": "high",
+      "status": "pending",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "task": "Provide SMS and email templates for customer communications",
+      "owner": "Mohammed Tatar",
+      "dueDate": "2025-09-20",
+      "priority": "medium",
+      "status": "pending",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3RQTYDB7216JMAET83XV3QK",
+          "title": "FarEye B2B-Sprint1 - DEMO session",
+          "date": "2025-09-02",
+          "url": "https://app.fireflies.ai/view/01K3RQTYDB7216JMAET83XV3QK"
+        }
+      ]
+    },
+    {
+      "task": "Create UAT tracking dashboard",
+      "owner": "Syed Zeeshan Mustafa",
+      "dueDate": "2025-09-18",
+      "priority": "high",
+      "status": "pending",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    }
+  ],
+  "team_updates": [
+    {
+      "name": "Ismail Farhan",
+      "role": "B2B Project Lead",
+      "update": "Leading UAT testing efforts and coordinating with FarEye team on issue resolution. Managing bulk upload testing challenges",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K47GN386N8NVKXBC0XCQZFXJ",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-10",
+          "url": "https://app.fireflies.ai/view/01K47GN386N8NVKXBC0XCQZFXJ"
+        }
+      ]
+    },
+    {
+      "name": "Mohammed Tatar",
+      "role": "Business Team Lead",
+      "update": "Working on customer data collection and communication templates. Coordinating with operations on label format requirements",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K3GPH1SG1J5A5KTK52KGBBB2",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-05",
+          "url": "https://app.fireflies.ai/view/01K3GPH1SG1J5A5KTK52KGBBB2"
+        }
+      ]
+    },
+    {
+      "name": "Nischal Bharadwaj",
+      "role": "FarEye Technical Lead",
+      "update": "Addressing UAT issues and API integration challenges. Coordinating with team on bulk processing alternatives",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "name": "Haitham Attia",
+      "role": "Technical Architect",
+      "update": "Driving resolution of API integration challenges and ensuring alignment between SAP and FarEye systems. Emphasized need for UAT issue tracking",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    },
+    {
+      "name": "Syed Zeeshan Mustafa",
+      "role": "Project Manager",
+      "update": "Coordinating overall project activities, managing stakeholder alignment, and driving resolution of critical blockers",
+      "evidence": [
+        {
+          "source": "fireflies",
+          "id": "01K51P669Z7PMGJR15VRQ50769",
+          "title": "B2B FarEye: Weekly Alignment",
+          "date": "2025-09-15",
+          "url": "https://app.fireflies.ai/view/01K51P669Z7PMGJR15VRQ50769"
+        }
+      ]
+    }
+  ],
+  "next_steps": [
+    {
+      "step": "Complete UAT issue classification and establish resolution timelines",
+      "owner": "Nischal Bharadwaj",
+      "dueDate": "2025-09-18"
+    },
+    {
+      "step": "Conduct technical call for bulk API processing alternatives",
+      "owner": "Technical Teams",
+      "dueDate": "2025-09-20"
+    },
+    {
+      "step": "Finalize customer location data collection",
+      "owner": "Mohammed Tatar",
+      "dueDate": "2025-09-30"
+    },
+    {
+      "step": "Deploy UAT fixes and conduct retesting",
+      "owner": "FarEye & Business Teams",
+      "dueDate": "2025-09-25"
+    },
+    {
+      "step": "Review and close Sprint 1 remaining items",
+      "owner": "All Teams",
+      "dueDate": "2025-09-20"
+    }
+  ]
+}
