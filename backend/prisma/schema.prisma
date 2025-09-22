@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Snapshot {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  actor       String?
+  notes       String?
+  rawExcel    Bytes?    // Store original Excel file
+
+  // Denormalized JSON for fast retrieval
+  domainData  String    // JSON string of PortfolioSnapshot
+  viewModel   String    // JSON string of DashboardVM
+
+  // Relations
+  headers     Headers?
+  status      Status[]
+  highlights  Highlight[]
+  lowlights   Lowlight[]
+  milestones  Milestone[]
+  metrics     Metrics[]
+
+  @@index([createdAt])
+}
+
+model Headers {
+  id                    String    @id @default(cuid())
+  snapshotId           String    @unique
+  snapshot             Snapshot  @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  portfolio            String
+  currentPeriodStart   String
+  currentPeriodEnd     String
+  comparisonPeriodStart String?
+  comparisonPeriodEnd  String?
+  reportDate           String
+
+  // Section titles (JSON)
+  sectionTitles        String?
+
+  // Table headers (JSON)
+  tableHeaders         String?
+
+  createdAt            DateTime  @default(now())
+}
+
+model Status {
+  id             String    @id @default(cuid())
+  snapshotId     String
+  snapshot       Snapshot  @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  project        String
+  statusColor    String    // green|amber|red
+  trend          String    // up|down|flat
+  manager        String
+  nextMilestone  String
+  order          Int       @default(0)
+
+  createdAt      DateTime  @default(now())
+
+  @@index([snapshotId])
+  @@index([project])
+}
+
+model Highlight {
+  id          String    @id @default(cuid())
+  snapshotId  String
+  snapshot    Snapshot  @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  project     String?
+  description String
+  order       Int       @default(0)
+
+  createdAt   DateTime  @default(now())
+
+  @@index([snapshotId])
+}
+
+model Lowlight {
+  id          String    @id @default(cuid())
+  snapshotId  String
+  snapshot    Snapshot  @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  project     String?
+  description String
+  order       Int       @default(0)
+
+  createdAt   DateTime  @default(now())
+
+  @@index([snapshotId])
+}
+
+model Milestone {
+  id                String    @id @default(cuid())
+  snapshotId        String
+  snapshot          Snapshot  @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  project           String
+  milestone         String
+  owner             String
+  dueDate           String
+  statusBadge       String
+  workstreamUpdate  String?
+  order             Int       @default(0)
+
+  createdAt         DateTime  @default(now())
+
+  @@index([snapshotId])
+  @@index([project])
+}
+
+model Metrics {
+  id                    String    @id @default(cuid())
+  snapshotId            String
+  snapshot              Snapshot  @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  project               String
+  spi                   Float?
+  cpi                   Float?
+  sev1Defects          Int?
+  sev2Defects          Int?
+  issues               Int?
+  riskScore            Float?
+  milestoneCompletion  Float?
+
+  createdAt            DateTime  @default(now())
+
+  @@index([snapshotId])
+  @@index([project])
+}
+
+model CurrentSnapshot {
+  id          String    @id @default("current")
+  snapshotId  String    @unique
+  updatedAt   DateTime  @updatedAt
+}

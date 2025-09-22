@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROCEED® Weekly Project Portfolio Updates</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', Verdana, Arial, sans-serif;
+            background: linear-gradient(135deg, #f2f2f4 0%, #e2e1e6 100%);
+            padding: 20px;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(66, 64, 70, 0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #424046 0%, #2d2d2d 100%);
+            color: #ffffff;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(158, 31, 99, 0.3));
+            transform: skewX(-15deg);
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #cb5b96;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            color: #f2f2f4;
+            font-size: 14px;
+        }
+
+        /* Excel controls - hidden by default, toggle with Ctrl+Shift+E */
+        .excel-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 2;
+            display: none;  /* Hidden by default to match original UI */
+            gap: 10px;
+        }
+
+        .excel-controls.visible {
+            display: flex;
+        }
+
+        .excel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .excel-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .excel-upload-input {
+            display: none;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #9e1f63;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #e05e3d;
+            display: inline-block;
+        }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: #f2f2f4;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #9e1f63;
+        }
+
+        .highlight-header {
+            font-weight: 600;
+            color: #424046;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .highlight-item {
+            color: #3a3a3a;
+            line-height: 1.7;
+            padding-left: 15px;
+            position: relative;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .highlight-item strong {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .highlight-item::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #e05e3d;
+        }
+
+        .milestone-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(66, 64, 70, 0.1);
+        }
+
+        .milestone-table thead {
+            background: linear-gradient(135deg, #9e1f63, #721548);
+            color: #ffffff;
+        }
+
+        .milestone-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .milestone-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .milestone-table tbody tr:hover {
+            background: #f2f2f4;
+            transform: translateX(2px);
+        }
+
+        .milestone-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .milestone-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e1e6;
+            color: #2d2d2d;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* Project names with rowspan get the brand color */
+        .milestone-table tbody td[rowspan] strong {
+            color: #9e1f63;
+            font-weight: 700;
+        }
+
+        /* All other strong text in the table should be black */
+        .milestone-table tbody td:not([rowspan]) strong {
+            color: #1a1a1a !important;
+            font-weight: 600;
+        }
+
+        /* Compact status table styles */
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .status-table thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #e2e1e6;
+        }
+
+        .status-table th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            color: #6a686f;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .status-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .status-table td {
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #2d2d2d;
+            line-height: 1.4;
+        }
+
+        .status-table .project-name {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .status-table .status-indicator {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-table .status-green {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-table .status-amber {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-table .status-red {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .milestone-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .project-separator {
+            border-top: 1px solid #e8e8e8;
+            height: 0;
+            opacity: 0.5;
+        }
+
+        .project-header-row {
+            background: linear-gradient(135deg, #9e1f63, #721548);
+            color: white;
+        }
+
+        .project-header-row td {
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: capitalize;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .status-completed {
+            background: rgba(45, 138, 84, 0.15);
+            color: #1c6e3a;
+            border: 1px solid rgba(45, 138, 84, 0.3);
+        }
+
+        .status-in-progress {
+            background: rgba(255, 165, 0, 0.15);
+            color: #cc6600;
+            border: 1px solid rgba(255, 165, 0, 0.3);
+        }
+
+        .status-pending {
+            background: rgba(106, 104, 111, 0.15);
+            color: #4a484f;
+            border: 1px solid rgba(106, 104, 111, 0.3);
+        }
+
+        .status-blocked {
+            background: rgba(220, 20, 60, 0.15);
+            color: #b91c3c;
+            border: 1px solid rgba(220, 20, 60, 0.3);
+        }
+
+        .date-badge {
+            background: rgba(226, 225, 230, 0.3);
+            color: #6a686f;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+            font-size: 10px;
+        }
+
+        .workstream-update {
+            background: rgba(248, 249, 250, 0.8);
+            padding: 8px 10px;
+            border-radius: 4px;
+            border-left: 2px solid rgba(0, 91, 140, 0.4);
+            line-height: 1.5;
+            font-size: 12px;
+            color: #2d2d2d;
+            font-weight: 600;
+        }
+
+        .footer {
+            background: #424046;
+            color: #e2e1e6;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+        }
+
+        .brand-mark {
+            display: inline-block;
+            background: #9e1f63;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin: 0 5px;
+        }
+
+        /* Loading overlay - permanently hidden to match original UI */
+        .loading-overlay {
+            display: none !important;  /* Always hidden */
+        }
+
+        /* Loading spinner - removed as not needed */
+        .loading-spinner {
+            display: none;
+        }
+
+        /* Spin animation removed - not needed */
+
+        /* Notification - permanently hidden to match original UI */
+        .notification {
+            display: none !important;  /* Always hidden */
+        }
+
+        /* Notification style classes removed - not needed */
+
+        /* SlideIn animation removed - not needed */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="excel-controls">
+                <!-- Excel controls -->
+                <button class="excel-btn" onclick="downloadTemplate()">📥 Excel</button>
+                <button class="excel-btn" onclick="document.getElementById('excelUpload').click()">📤 Excel</button>
+                <input type="file" id="excelUpload" class="excel-upload-input" accept=".xlsx,.xlsm" onchange="handleFileUpload(event)">
+
+                <!-- JSON controls -->
+                <div style="margin-left: 10px; padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.2);">
+                    <button class="excel-btn" onclick="downloadJson('domain')" title="Download raw data">📥 JSON</button>
+                    <button class="excel-btn" onclick="downloadJson('view')" title="Download view model">📥 View</button>
+                    <button class="excel-btn" onclick="document.getElementById('jsonUpload').click()">📤 JSON</button>
+                    <input type="file" id="jsonUpload" class="excel-upload-input" accept=".json" onchange="handleJsonUpload(event)">
+                </div>
+            </div>
+            <h1 data-bind="title">PROCEED® Weekly Project Portfolio Updates</h1>
+            <div class="header-info">
+                <div class="info-item">
+                    <span class="info-label">Portfolio:</span>
+                    <span class="info-value" data-bind="portfolio">Enterprise Projects</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Current Period:</span>
+                    <span class="info-value" data-bind="currentPeriod">Sept 11 - Sept 17, 2025</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Comparison Period:</span>
+                    <span class="info-value" data-bind="comparisonPeriod">Sept 3 - Sept 10, 2025</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Report Date:</span>
+                    <span class="info-value" data-bind="reportDate">September 17, 2025</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <section class="section">
+                <h2 class="section-title" data-bind="title_portfolioStatus">Portfolio Projects Status</h2>
+                <table class="status-table" data-bind="statusTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 35%" data-bind="th_project">Project</th>
+                            <th style="width: 12%" data-bind="th_status">Status</th>
+                            <th style="width: 23%" data-bind="th_projectManager">Project Manager</th>
+                            <th style="width: 30%" data-bind="th_nextMilestone">Next Milestone</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="statusTableBody">
+                        <tr>
+                            <td class="project-name">FarEye B2B Transportation</td>
+                            <td><span class="status-indicator status-amber">Amber ↓</span></td>
+                            <td>Syed Zeeshan Mustafa</td>
+                            <td>UAT Completion (Sept 30)</td>
+                        </tr>
+                        <tr>
+                            <td class="project-name">Warehouse Automation Ph2</td>
+                            <td><span class="status-indicator status-green">Green ↑</span></td>
+                            <td>Ahmed Al-Rahman</td>
+                            <td>Integration Testing (Sept 25)</td>
+                        </tr>
+                        <tr>
+                            <td class="project-name">Digital Transformation</td>
+                            <td><span class="status-indicator status-red">Red ↓</span></td>
+                            <td>Sarah Mitchell</td>
+                            <td>Platform Selection (Delayed)</td>
+                        </tr>
+                        <tr>
+                            <td class="project-name">Customer Portal Upgrade</td>
+                            <td><span class="status-indicator status-amber">Amber →</span></td>
+                            <td>John Davies</td>
+                            <td>Beta Release (Oct 5)</td>
+                        </tr>
+                        <tr>
+                            <td class="project-name">Supply Chain Optimization</td>
+                            <td><span class="status-indicator status-green">Green →</span></td>
+                            <td>Maria Rodriguez</td>
+                            <td>Pilot Launch (Oct 1)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title" data-bind="title_highlightsLowlights">Consolidated Highlights & Lowlights (All Projects)</h2>
+                <div class="highlights-grid" data-bind="hlGrid">
+                    <div>
+                        <div class="highlight-header">Highlights</div>
+                        <div data-bind="highlightsList">
+                            <div class="highlight-item"><strong>FarEye:</strong> Sprint 1 demo completed successfully with core B2B functionalities</div>
+                            <div class="highlight-item"><strong>Warehouse:</strong> Ahead of schedule by 5% with 8% cost savings achieved</div>
+                            <div class="highlight-item"><strong>Supply Chain:</strong> Risk mitigation completed, all high risks retired</div>
+                            <div class="highlight-item"><strong>Digital:</strong> Vendor contract renegotiated saving 12% on licensing</div>
+                            <div class="highlight-item"><strong>Portal:</strong> User acceptance testing achieved 85% positive feedback</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="highlight-header">Lowlights</div>
+                        <div data-bind="lowlightsList">
+                            <div class="highlight-item"><strong>FarEye:</strong> 30+ UAT issues pending classification, impacting timeline</div>
+                            <div class="highlight-item"><strong>Digital:</strong> Critical path slipped 15%, escalation required</div>
+                            <div class="highlight-item"><strong>Digital:</strong> 3 key positions unfilled, creating resource gap</div>
+                            <div class="highlight-item"><strong>Portal:</strong> Security vulnerability identified, patch required</div>
+                            <div class="highlight-item"><strong>FarEye:</strong> API bulk processing limitation impacting integration</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title" data-bind="title_keyMilestones">Key Milestones by Project</h2>
+                <table class="milestone-table" data-bind="milestonesTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%" data-bind="th_project_m">Project</th>
+                            <th style="width: 20%" data-bind="th_milestone">Milestone</th>
+                            <th style="width: 15%" data-bind="th_owner">Owner</th>
+                            <th style="width: 12%" data-bind="th_dueDate">Due Date</th>
+                            <th style="width: 10%" data-bind="th_statusBadge">Status</th>
+                            <th style="width: 28%"><strong data-bind="th_workstreamUpdate">Workstream Update</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="milestonesTableBody">
+                        <!-- Milestones will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </section>
+
+        </div>
+
+        <div class="footer">
+            <span class="brand-mark">PROCEED®</span>
+            <span data-bind="footerText">Portfolio Management Office | Weekly Status Update | Sept 11-17, 2025</span>
+        </div>
+    </div>
+
+    <!-- Loading overlay and notification removed to match original UI -->
+
+    <script src="http://localhost:3001/dashboard-bind.js"></script>
+    <script>
+        // RAG Status Evaluation Algorithm (runs in background)
+        class ProjectStatusEvaluator {
+            constructor() {
+                this.thresholds = {
+                    schedule: { green: 0.98, amber: 0.90 },
+                    cost: { green: 0.98, amber: 0.90 },
+                    quality: { green: { sev1: 0, sev2: 0 }, amber: { sev1: 0, sev2: 3 } },
+                    risk: { green: 0.3, amber: 0.6 }
+                };
+            }
+
+            evaluateProject(metrics) {
+                const scheduleStatus = this.evaluateSchedule(metrics.spi);
+                const costStatus = this.evaluateCost(metrics.cpi);
+                const qualityStatus = this.evaluateQuality(metrics);
+                const riskStatus = this.evaluateRisk(metrics.riskScore);
+
+                // Worst-of rule for overall status
+                const statuses = [scheduleStatus, costStatus, qualityStatus, riskStatus];
+                const severityMap = { green: 0, amber: 1, red: 2 };
+                const worstStatus = statuses.reduce((worst, current) => {
+                    return severityMap[current] > severityMap[worst] ? current : worst;
+                }, 'green');
+
+                return {
+                    overall: worstStatus,
+                    dimensions: { schedule: scheduleStatus, cost: costStatus, quality: qualityStatus, risk: riskStatus }
+                };
+            }
+
+            evaluateSchedule(spi) {
+                if (spi >= this.thresholds.schedule.green) return 'green';
+                if (spi >= this.thresholds.schedule.amber) return 'amber';
+                return 'red';
+            }
+
+            evaluateCost(cpi) {
+                if (cpi >= this.thresholds.cost.green) return 'green';
+                if (cpi >= this.thresholds.cost.amber) return 'amber';
+                return 'red';
+            }
+
+            evaluateQuality(metrics) {
+                const { sev1Defects = 0, sev2Defects = 0, issues = 0 } = metrics;
+                if (sev1Defects <= this.thresholds.quality.green.sev1 && sev2Defects <= this.thresholds.quality.green.sev2) return 'green';
+                if (sev1Defects <= this.thresholds.quality.amber.sev1 && sev2Defects <= this.thresholds.quality.amber.sev2) return 'amber';
+                return 'red';
+            }
+
+            evaluateRisk(riskScore) {
+                if (riskScore <= this.thresholds.risk.green) return 'green';
+                if (riskScore <= this.thresholds.risk.amber) return 'amber';
+                return 'red';
+            }
+
+            detectHighlights(current, previous) {
+                const highlights = [];
+                if (current.spi >= 1.05) highlights.push({ type: 'schedule', description: `SPI at ${current.spi.toFixed(2)}, ahead of schedule` });
+                if (current.cpi >= 1.05) highlights.push({ type: 'cost', description: `CPI at ${current.cpi.toFixed(2)}, under budget` });
+                if (current.sev1Defects === 0 && current.sev2Defects === 0) highlights.push({ type: 'quality', description: 'Zero critical defects' });
+                if (current.milestoneCompletion > 0.95) highlights.push({ type: 'delivery', description: `${(current.milestoneCompletion * 100).toFixed(0)}% milestone completion` });
+                return highlights;
+            }
+
+            detectLowlights(current, previous) {
+                const lowlights = [];
+                if (current.spi <= 0.95) lowlights.push({ type: 'schedule', description: `SPI at ${current.spi.toFixed(2)}, behind schedule` });
+                if (current.cpi <= 0.95) lowlights.push({ type: 'cost', description: `CPI at ${current.cpi.toFixed(2)}, over budget` });
+                if (current.sev1Defects >= 1) lowlights.push({ type: 'quality', description: `${current.sev1Defects} Severity 1 defects` });
+                if (current.riskScore > 0.6) lowlights.push({ type: 'risk', description: `Risk score at ${current.riskScore.toFixed(2)}` });
+                return lowlights;
+            }
+        }
+
+        // Notification system - console only to match original UI
+        function showNotification(message, type = 'success') {
+            // Only log to console, no visual notification
+            const prefix = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅';
+            console.log(`${prefix} ${message}`);
+        }
+
+        // Loading overlay - no-op functions to match original UI
+        function showLoading() {
+            // No visual loading indicator to match original UI
+        }
+
+        function hideLoading() {
+            // No visual loading indicator to match original UI
+        }
+
+        // Download JSON data
+        async function downloadJson(format = 'domain') {
+            showLoading();
+            try {
+                const response = await fetch(`http://localhost:3001/api/json/download?format=${format}`);
+                if (!response.ok) throw new Error('Failed to download JSON');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `proceed_portfolio_${format}_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showNotification(`JSON ${format} downloaded successfully`);
+            } catch (error) {
+                showNotification('Failed to download JSON: ' + error.message, 'error');
+                console.error('JSON download error:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Handle JSON file upload
+        async function handleJsonUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            showLoading();
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // First, preview the upload
+                const previewResponse = await fetch('http://localhost:3001/api/json/upload?commit=false&format=domain', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const previewData = await previewResponse.json();
+
+                if (!previewData.ok) {
+                    showNotification('JSON validation failed: ' + (previewData.error?.message || 'Unknown error'), 'error');
+                    return;
+                }
+
+                // Show statistics
+                showNotification(`JSON loaded: ${previewData.dataStats.projects} projects, ${previewData.dataStats.highlights} highlights, ${previewData.dataStats.milestones} milestones`);
+
+                // Update the dashboard with preview data
+                if (window.DashboardBinder) {
+                    window.DashboardBinder.render(previewData.preview);
+                }
+
+                // Ask user to confirm
+                if (confirm('JSON data looks good. Do you want to save this data?')) {
+                    // Commit the changes
+                    const commitFormData = new FormData();
+                    commitFormData.append('file', file);
+
+                    const commitResponse = await fetch('http://localhost:3001/api/json/upload?commit=true&format=domain', {
+                        method: 'POST',
+                        body: commitFormData
+                    });
+
+                    const commitData = await commitResponse.json();
+                    if (commitData.ok) {
+                        showNotification('JSON data saved successfully!', 'success');
+                    }
+                }
+
+            } catch (error) {
+                showNotification('JSON upload failed: ' + error.message, 'error');
+                console.error('JSON upload error:', error);
+            } finally {
+                hideLoading();
+                event.target.value = ''; // Reset file input
+            }
+        }
+
+        // Download template
+        async function downloadTemplate() {
+            showLoading();
+            try {
+                const response = await fetch('http://localhost:3001/api/template');
+                if (!response.ok) throw new Error('Failed to download template');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `proceed_portfolio_template_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showNotification('Template downloaded successfully');
+            } catch (error) {
+                showNotification('Failed to download template: ' + error.message, 'error');
+                console.error('Download error:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Handle file upload
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            showLoading();
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // First, preview the upload
+                const previewResponse = await fetch('http://localhost:3001/api/upload?commit=false', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (previewResponse.headers.get('content-type')?.includes('spreadsheet')) {
+                    // Got an error report Excel file
+                    const blob = await previewResponse.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'import-report.xlsx';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+
+                    showNotification('Validation errors found. Check the downloaded report.', 'error');
+                    return;
+                }
+
+                const previewData = await previewResponse.json();
+
+                if (!previewData.ok) {
+                    showNotification('Upload failed: ' + (previewData.error?.message || 'Unknown error'), 'error');
+                    return;
+                }
+
+                // Show warnings if any
+                if (previewData.warnings && previewData.warnings.length > 0) {
+                    showNotification(`Upload successful with ${previewData.warnings.length} warnings`, 'warning');
+                }
+
+                // Update the dashboard with preview data
+                if (window.DashboardBinder) {
+                    window.DashboardBinder.render(previewData.preview);
+                }
+
+                // Ask user to confirm
+                if (confirm('Preview looks good. Do you want to save this data?')) {
+                    // Commit the changes
+                    const commitFormData = new FormData();
+                    commitFormData.append('file', file);
+
+                    const commitResponse = await fetch('http://localhost:3001/api/upload?commit=true', {
+                        method: 'POST',
+                        body: commitFormData
+                    });
+
+                    const commitData = await commitResponse.json();
+                    if (commitData.ok) {
+                        showNotification('Data saved successfully!', 'success');
+                    }
+                }
+
+            } catch (error) {
+                showNotification('Upload failed: ' + error.message, 'error');
+                console.error('Upload error:', error);
+            } finally {
+                hideLoading();
+                event.target.value = ''; // Reset file input
+            }
+        }
+
+        // Keyboard shortcuts for Excel/JSON controls
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+Shift+E - Toggle Excel/JSON controls
+            if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+                e.preventDefault();
+                const controls = document.querySelector('.excel-controls');
+                controls.classList.toggle('visible');
+                console.log('Data controls:', controls.classList.contains('visible') ? 'visible' : 'hidden');
+            }
+
+            // Ctrl+Shift+J - Quick JSON download (domain format)
+            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                e.preventDefault();
+                downloadJson('domain');
+            }
+        });
+
+        // Initialize evaluator and dashboard on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            const evaluator = new ProjectStatusEvaluator();
+
+            // Example: Evaluate FarEye project (runs in background)
+            const fareyeMetrics = {
+                spi: 0.95,
+                cpi: 0.98,
+                sev1Defects: 0,
+                sev2Defects: 3,
+                issues: 30,
+                riskScore: 0.6,
+                milestoneCompletion: 0.4
+            };
+
+            const evaluation = evaluator.evaluateProject(fareyeMetrics);
+            console.log('FarEye Status Evaluation:', evaluation);
+
+            // Initialize dashboard binding
+            if (window.DashboardBinder) {
+                await window.DashboardBinder.init();
+            }
+        });
+    </script>
+</body>
+</html>

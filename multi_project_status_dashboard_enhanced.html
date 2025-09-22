@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROCEED® Executive Project Status Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', Verdana, Arial, sans-serif;
+            background: linear-gradient(135deg, #f2f2f4 0%, #e2e1e6 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #424046 0%, #2d2d2d 100%);
+            color: #ffffff;
+            padding: 30px;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 10px 30px rgba(66, 64, 70, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(158, 31, 99, 0.3));
+            transform: skewX(-15deg);
+        }
+
+        .dashboard-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .dashboard-subtitle {
+            font-size: 16px;
+            color: #cb5b96;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-controls {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 2;
+            display: flex;
+            gap: 10px;
+        }
+
+        .upload-btn, .download-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover, .download-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .executive-summary {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #424046;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #9e1f63;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .portfolio-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: #6a686f;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #424046;
+        }
+
+        .portfolio-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #9e1f63;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #6a686f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #424046;
+        }
+
+        .metric-trend {
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .status-section {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #424046;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #9e1f63;
+            padding-bottom: 10px;
+        }
+
+        .status-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .status-table thead {
+            background: linear-gradient(135deg, #9e1f63, #721548);
+            color: white;
+        }
+
+        .status-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .status-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e1e6;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-green {
+            background: linear-gradient(135deg, #2D8A54, #228B22);
+            color: white;
+        }
+
+        .status-amber {
+            background: linear-gradient(135deg, #FFA500, #FF8C00);
+            color: white;
+        }
+
+        .status-red {
+            background: linear-gradient(135deg, #DC143C, #8B0000);
+            color: white;
+        }
+
+        .trend-indicator {
+            margin-left: 8px;
+            font-size: 16px;
+        }
+
+        .highlights-lowlights-section {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .highlights-column, .lowlights-column {
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .highlights-column {
+            border-left: 4px solid #2D8A54;
+        }
+
+        .lowlights-column {
+            border-left: 4px solid #DC143C;
+        }
+
+        .hl-title {
+            font-weight: 600;
+            color: #424046;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hl-list {
+            list-style: none;
+        }
+
+        .hl-item {
+            font-size: 13px;
+            color: #6a686f;
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .hl-item::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .highlights-column .hl-item::before {
+            color: #2D8A54;
+        }
+
+        .lowlights-column .hl-item::before {
+            color: #DC143C;
+        }
+
+        .milestones-section {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .milestone-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+        }
+
+        .milestone-table thead {
+            background: linear-gradient(135deg, #9e1f63, #721548);
+            color: white;
+        }
+
+        .milestone-table th {
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .milestone-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .milestone-table tbody tr.project-header {
+            background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
+            font-weight: 600;
+        }
+
+        .milestone-table tbody tr.project-header td {
+            padding: 12px 10px;
+            color: #424046;
+            border-top: 2px solid #9e1f63;
+        }
+
+        .milestone-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e1e6;
+            color: #424046;
+        }
+
+        .milestone-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-pending {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-at-risk {
+            background: #f5c6cb;
+            color: #721c24;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #9e1f63;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            background: #424046;
+            color: #e2e1e6;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 0 0 12px 12px;
+            font-size: 12px;
+        }
+
+        .brand-mark {
+            display: inline-block;
+            background: #9e1f63;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin: 0 5px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1001;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .notification.warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">PROCEED® Portfolio Status Dashboard</h1>
+            <p class="dashboard-subtitle">Executive Multi-Project Health Monitor</p>
+            <div class="upload-controls">
+                <button class="download-btn" onclick="downloadTemplate()">📥 Download Template</button>
+                <button class="upload-btn" onclick="document.getElementById('excelUpload').click()">📤 Upload Excel</button>
+                <input type="file" id="excelUpload" class="upload-input" accept=".xlsx,.xlsm" onchange="handleFileUpload(event)">
+            </div>
+        </div>
+
+        <div class="executive-summary">
+            <h2 class="summary-title" data-bind="title">PROCEED® Weekly Project Portfolio Updates</h2>
+            <div class="portfolio-info">
+                <div class="info-item">
+                    <span class="info-label">Portfolio</span>
+                    <span class="info-value" data-bind="portfolio">Enterprise Projects</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Current Period</span>
+                    <span class="info-value" data-bind="currentPeriod">Sept 11 - Sept 17, 2025</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Comparison Period</span>
+                    <span class="info-value" data-bind="comparisonPeriod">Sept 3 - Sept 10, 2025</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Report Date</span>
+                    <span class="info-value" data-bind="reportDate">September 17, 2025</span>
+                </div>
+            </div>
+            <div class="portfolio-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Total Projects</div>
+                    <div class="metric-value" data-bind="totalProjects">5</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Green Status</div>
+                    <div class="metric-value" data-bind="greenCount">2<span class="metric-trend">↑</span></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Amber Status</div>
+                    <div class="metric-value" data-bind="amberCount">2<span class="metric-trend">→</span></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Red Status</div>
+                    <div class="metric-value" data-bind="redCount">1<span class="metric-trend">↓</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-section">
+            <h2 class="section-title" data-bind="title_portfolioStatus">Portfolio Projects Status</h2>
+            <table class="status-table" data-bind="statusTable">
+                <thead>
+                    <tr>
+                        <th data-bind="th_Project">Project</th>
+                        <th data-bind="th_Status">Status</th>
+                        <th data-bind="th_Trend">Trend</th>
+                        <th data-bind="th_ProjectManager">Project Manager</th>
+                        <th data-bind="th_NextMilestone">Next Milestone</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="statusTableBody">
+                    <!-- Status rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlights-lowlights-section">
+            <h2 class="section-title" data-bind="title_highlightsLowlights">Consolidated Highlights & Lowlights (All Projects)</h2>
+            <div class="highlights-grid" data-bind="hlGrid">
+                <div class="highlights-column">
+                    <div class="hl-title">HIGHLIGHTS</div>
+                    <ul class="hl-list" data-bind="highlightsList">
+                        <!-- Highlights will be populated here -->
+                    </ul>
+                </div>
+                <div class="lowlights-column">
+                    <div class="hl-title">LOWLIGHTS</div>
+                    <ul class="hl-list" data-bind="lowlightsList">
+                        <!-- Lowlights will be populated here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="milestones-section">
+            <h2 class="section-title" data-bind="title_keyMilestones">Key Milestones by Project</h2>
+            <table class="milestone-table" data-bind="milestonesTable">
+                <thead>
+                    <tr>
+                        <th data-bind="th_Milestone">Milestone</th>
+                        <th data-bind="th_Owner">Owner</th>
+                        <th data-bind="th_DueDate">Due Date</th>
+                        <th data-bind="th_StatusBadge">Status</th>
+                        <th data-bind="th_WorkstreamUpdate">Workstream Update</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="milestonesTableBody">
+                    <!-- Milestone rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <span class="brand-mark">PROCEED®</span>
+            <span>Executive Portfolio Dashboard | Generated: <span id="currentDateTime"></span></span>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script src="dashboard-bind.js"></script>
+    <script>
+        // Set current date/time
+        document.getElementById('currentDateTime').textContent = new Date().toLocaleString();
+
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        // Loading overlay
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        // Download template
+        async function downloadTemplate() {
+            showLoading();
+            try {
+                const response = await fetch('http://localhost:3001/api/template');
+                if (!response.ok) throw new Error('Failed to download template');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `proceed_portfolio_template_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showNotification('Template downloaded successfully');
+            } catch (error) {
+                showNotification('Failed to download template: ' + error.message, 'error');
+                console.error('Download error:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Handle file upload
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            showLoading();
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // First, preview the upload
+                const previewResponse = await fetch('http://localhost:3001/api/upload?commit=false', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (previewResponse.headers.get('content-type')?.includes('spreadsheet')) {
+                    // Got an error report Excel file
+                    const blob = await previewResponse.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'import-report.xlsx';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+
+                    showNotification('Validation errors found. Check the downloaded report.', 'error');
+                    return;
+                }
+
+                const previewData = await previewResponse.json();
+
+                if (!previewData.ok) {
+                    showNotification('Upload failed: ' + (previewData.error?.message || 'Unknown error'), 'error');
+                    return;
+                }
+
+                // Show warnings if any
+                if (previewData.warnings && previewData.warnings.length > 0) {
+                    showNotification(`Upload successful with ${previewData.warnings.length} warnings`, 'warning');
+                }
+
+                // Update the dashboard with preview data
+                if (window.DashboardBinder) {
+                    window.DashboardBinder.render(previewData.preview);
+                }
+
+                // Ask user to confirm
+                if (confirm('Preview looks good. Do you want to save this data?')) {
+                    // Commit the changes
+                    const commitFormData = new FormData();
+                    commitFormData.append('file', file);
+
+                    const commitResponse = await fetch('http://localhost:3001/api/upload?commit=true', {
+                        method: 'POST',
+                        body: commitFormData
+                    });
+
+                    const commitData = await commitResponse.json();
+                    if (commitData.ok) {
+                        showNotification('Data saved successfully!', 'success');
+                    }
+                }
+
+            } catch (error) {
+                showNotification('Upload failed: ' + error.message, 'error');
+                console.error('Upload error:', error);
+            } finally {
+                hideLoading();
+                event.target.value = ''; // Reset file input
+            }
+        }
+
+        // Initialize dashboard on load
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (window.DashboardBinder) {
+                await window.DashboardBinder.init();
+            }
+        });
+    </script>
+</body>
+</html>

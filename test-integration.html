@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Integration Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .pending { background: #fff3cd; color: #856404; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>PROCEED Dashboard Integration Test</h1>
+
+    <div class="test-section">
+        <h2>Backend API Tests</h2>
+        <button onclick="testHealth()">Test Health</button>
+        <button onclick="testDashboard()">Test Dashboard API</button>
+        <button onclick="testTemplate()">Test Template Download</button>
+        <button onclick="testVersions()">Test Versions</button>
+        <div id="apiResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Static Files Test</h2>
+        <button onclick="testStaticFiles()">Test Dashboard-bind.js</button>
+        <div id="staticResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Full Integration Test</h2>
+        <button onclick="runFullTest()">Run All Tests</button>
+        <div id="fullResults"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001';
+
+        async function addResult(containerId, message, status = 'pending') {
+            const container = document.getElementById(containerId);
+            const result = document.createElement('div');
+            result.className = `test-result ${status}`;
+            result.innerHTML = message;
+            container.appendChild(result);
+            return result;
+        }
+
+        async function testHealth() {
+            const container = document.getElementById('apiResults');
+            container.innerHTML = '';
+            const result = await addResult('apiResults', 'Testing /health endpoint...', 'pending');
+
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                result.className = 'test-result success';
+                result.innerHTML = `✅ Health Check: ${data.status} (uptime: ${Math.round(data.uptime)}s)`;
+            } catch (error) {
+                result.className = 'test-result error';
+                result.innerHTML = `❌ Health Check Failed: ${error.message}`;
+            }
+        }
+
+        async function testDashboard() {
+            const container = document.getElementById('apiResults');
+            container.innerHTML = '';
+            const result = await addResult('apiResults', 'Testing /api/dashboard endpoint...', 'pending');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/dashboard`);
+                const data = await response.json();
+                result.className = 'test-result success';
+                result.innerHTML = `✅ Dashboard API: Retrieved ${data.statusTable?.length || 0} projects, ${data.highlights?.length || 0} highlights, ${data.milestonesTable?.length || 0} milestones`;
+            } catch (error) {
+                result.className = 'test-result error';
+                result.innerHTML = `❌ Dashboard API Failed: ${error.message}`;
+            }
+        }
+
+        async function testTemplate() {
+            const container = document.getElementById('apiResults');
+            container.innerHTML = '';
+            const result = await addResult('apiResults', 'Testing /api/template endpoint...', 'pending');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/template`);
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    const contentLength = response.headers.get('content-length');
+                    result.className = 'test-result success';
+                    result.innerHTML = `✅ Template Download: Excel file ready (${Math.round(contentLength/1024)}KB)`;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                result.className = 'test-result error';
+                result.innerHTML = `❌ Template Download Failed: ${error.message}`;
+            }
+        }
+
+        async function testVersions() {
+            const container = document.getElementById('apiResults');
+            container.innerHTML = '';
+            const result = await addResult('apiResults', 'Testing /api/versions endpoint...', 'pending');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/versions`);
+                const data = await response.json();
+                result.className = 'test-result success';
+                result.innerHTML = `✅ Versions API: ${data.versions?.length || 0} version(s) found`;
+            } catch (error) {
+                result.className = 'test-result error';
+                result.innerHTML = `❌ Versions API Failed: ${error.message}`;
+            }
+        }
+
+        async function testStaticFiles() {
+            const container = document.getElementById('staticResults');
+            container.innerHTML = '';
+            const result = await addResult('staticResults', 'Testing dashboard-bind.js...', 'pending');
+
+            try {
+                const response = await fetch(`${API_BASE}/dashboard-bind.js`);
+                if (response.ok) {
+                    const text = await response.text();
+                    if (text.includes('DashboardBinder')) {
+                        result.className = 'test-result success';
+                        result.innerHTML = `✅ dashboard-bind.js: Loaded successfully (${Math.round(text.length/1024)}KB)`;
+                    } else {
+                        throw new Error('Invalid content');
+                    }
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                result.className = 'test-result error';
+                result.innerHTML = `❌ dashboard-bind.js Failed: ${error.message}`;
+            }
+        }
+
+        async function runFullTest() {
+            const container = document.getElementById('fullResults');
+            container.innerHTML = '<h3>Running Full Integration Test...</h3>';
+
+            const tests = [
+                { name: 'Backend Health', fn: async () => {
+                    const response = await fetch(`${API_BASE}/health`);
+                    return response.ok;
+                }},
+                { name: 'Dashboard API', fn: async () => {
+                    const response = await fetch(`${API_BASE}/api/dashboard`);
+                    const data = await response.json();
+                    return data.header && data.statusTable;
+                }},
+                { name: 'Template Download', fn: async () => {
+                    const response = await fetch(`${API_BASE}/api/template`);
+                    return response.ok && response.headers.get('content-type').includes('spreadsheet');
+                }},
+                { name: 'Versions API', fn: async () => {
+                    const response = await fetch(`${API_BASE}/api/versions`);
+                    return response.ok;
+                }},
+                { name: 'Static Files', fn: async () => {
+                    const response = await fetch(`${API_BASE}/dashboard-bind.js`);
+                    return response.ok;
+                }}
+            ];
+
+            let passed = 0;
+            let failed = 0;
+
+            for (const test of tests) {
+                const result = document.createElement('div');
+                result.className = 'test-result pending';
+                result.textContent = `Testing ${test.name}...`;
+                container.appendChild(result);
+
+                try {
+                    const success = await test.fn();
+                    if (success) {
+                        result.className = 'test-result success';
+                        result.textContent = `✅ ${test.name}: PASSED`;
+                        passed++;
+                    } else {
+                        throw new Error('Test returned false');
+                    }
+                } catch (error) {
+                    result.className = 'test-result error';
+                    result.textContent = `❌ ${test.name}: FAILED - ${error.message}`;
+                    failed++;
+                }
+            }
+
+            const summary = document.createElement('div');
+            summary.className = failed === 0 ? 'test-result success' : 'test-result error';
+            summary.innerHTML = `<h3>Test Summary: ${passed}/${tests.length} Passed</h3>`;
+            container.appendChild(summary);
+        }
+
+        // Auto-run on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runFullTest, 500);
+        });
+    </script>
+</body>
+</html>
