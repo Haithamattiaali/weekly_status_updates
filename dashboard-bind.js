@@ -5,8 +5,15 @@
 
 class DashboardBinder {
     constructor() {
-        this.apiBase = 'http://localhost:3001/api';
+        // Auto-detect environment and use appropriate API endpoint
+        this.apiBase = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001/api'
+            : '/.netlify/functions';
         this.data = null;
+        this.retryCount = 0;
+        this.maxRetries = 3;
+        this.cache = new Map();
+        this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
     }
 
     async init() {
@@ -20,18 +27,94 @@ class DashboardBinder {
     }
 
     async fetchDashboard() {
-        const response = await fetch(`${this.apiBase}/dashboard`, {
-            headers: {
-                'Accept': 'application/json',
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Check cache first
+        const cacheKey = 'dashboard-data';
+        const cachedData = this.getCachedData(cacheKey);
+        if (cachedData) {
+            console.log('[Dashboard] Using cached data');
+            this.data = cachedData;
+            return this.data;
         }
 
-        this.data = await response.json();
-        return this.data;
+        // Fetch with retry logic
+        const endpoint = this.apiBase.includes('netlify')
+            ? `${this.apiBase}/dashboard`
+            : `${this.apiBase}/dashboard`;
+
+        try {
+            const response = await this.fetchWithRetry(endpoint, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            this.data = await response.json();
+
+            // Cache the successful response
+            this.setCachedData(cacheKey, this.data);
+
+            return this.data;
+        } catch (error) {
+            // Try to use stale cache if available
+            const staleData = this.getCachedData(cacheKey, true);
+            if (staleData) {
+                console.warn('[Dashboard] Using stale cached data due to error:', error);
+                this.data = staleData;
+                return this.data;
+            }
+            throw error;
+        }
+    }
+
+    async fetchWithRetry(url, options, retryCount = 0) {
+        try {
+            const response = await fetch(url, {
+                ...options,
+                signal: AbortSignal.timeout(10000), // 10 second timeout
+            });
+
+            // Reset retry count on success
+            if (response.ok) {
+                this.retryCount = 0;
+            }
+
+            return response;
+        } catch (error) {
+            if (retryCount < this.maxRetries) {
+                const delay = Math.min(1000 * Math.pow(2, retryCount), 5000);
+                console.log(`[Dashboard] Retry ${retryCount + 1}/${this.maxRetries} after ${delay}ms`);
+
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return this.fetchWithRetry(url, options, retryCount + 1);
+            }
+            throw error;
+        }
+    }
+
+    getCachedData(key, allowStale = false) {
+        const cached = this.cache.get(key);
+        if (!cached) return null;
+
+        const isExpired = Date.now() - cached.timestamp > this.cacheTimeout;
+        if (!isExpired || allowStale) {
+            return cached.data;
+        }
+
+        // Remove expired cache
+        this.cache.delete(key);
+        return null;
+    }
+
+    setCachedData(key, data) {
+        this.cache.set(key, {
+            data,
+            timestamp: Date.now(),
+        });
     }
 
     render(data) {

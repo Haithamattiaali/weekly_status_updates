@@ -1,0 +1,88 @@
+{
+  "name": "proceed-dashboard",
+  "version": "2.0.0",
+  "description": "PROCEED Portfolio Management Dashboard - Enterprise-ready with Netlify deployment",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run dev:backend & npm run dev:frontend",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "npx live-server --port=3000 --watch=fareye-b2b-project-update.html,dashboard-bind.js",
+    "dev:netlify": "netlify dev",
+    "build:all": "npm run install:all && npm run build:functions && npm run build:frontend",
+    "install:all": "npm install && cd backend && npm install && cd .. && cd netlify/functions && npm install && cd ../..",
+    "build:functions": "npm run build:db && npm run build:netlify-functions",
+    "build:db": "node scripts/prepare-db.js",
+    "build:netlify-functions": "node scripts/build-functions.js",
+    "build:frontend": "node scripts/build-frontend.js",
+    "build:preview": "npm run build:all && npm run test:integration",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "vitest run --config vitest.config.unit.js",
+    "test:integration": "vitest run --config vitest.config.integration.js",
+    "test:e2e": "playwright test",
+    "lint": "eslint . --ext .ts,.js,.html",
+    "typecheck": "tsc --noEmit",
+    "validate": "npm run lint && npm run typecheck && npm run test",
+    "deploy": "netlify deploy --prod",
+    "deploy:preview": "netlify deploy",
+    "logs": "netlify functions:log",
+    "env:push": "netlify env:import .env.production",
+    "env:pull": "netlify env:list > .env.local",
+    "db:migrate": "node scripts/migrate-db.js",
+    "db:seed": "node scripts/seed-db.js",
+    "monitor": "node scripts/monitor.js",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.4.2",
+    "@netlify/functions": "^2.4.1",
+    "@sentry/node": "^7.91.0",
+    "busboy": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "exceljs": "^4.4.0",
+    "pino": "^8.17.2",
+    "pino-pretty": "^10.3.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@netlify/build": "^29.31.1",
+    "@netlify/plugin-functions-install-core": "^4.5.3",
+    "@netlify/plugin-lighthouse": "^4.1.1",
+    "@playwright/test": "^1.41.0",
+    "@sentry/netlify-build-plugin": "^1.1.1",
+    "@types/busboy": "^1.5.3",
+    "@types/cors": "^2.8.17",
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "esbuild": "^0.19.10",
+    "eslint": "^8.56.0",
+    "netlify-cli": "^17.10.1",
+    "terser": "^5.26.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vitest": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/proceed/dashboard.git"
+  },
+  "keywords": [
+    "dashboard",
+    "portfolio",
+    "management",
+    "excel",
+    "netlify",
+    "serverless"
+  ],
+  "author": "PROCEED Team",
+  "license": "MIT",
+  "volta": {
+    "node": "20.11.0",
+    "npm": "10.2.4"
+  }
+}

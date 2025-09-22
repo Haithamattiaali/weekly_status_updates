@@ -1,0 +1,270 @@
+# PROCEED Dashboard - Netlify Configuration
+# Perfect production deployment with zero downtime and self-recovery
+
+[build]
+  # Build command that handles both frontend and functions
+  command = "npm run build:all"
+
+  # Directory to deploy
+  publish = "dist"
+
+  # Functions directory
+  functions = "netlify/functions"
+
+  # Node.js version for builds
+  environment = { NODE_VERSION = "20.11.0", NPM_VERSION = "10.2.4" }
+
+[build.environment]
+  # Build environment variables
+  NODE_ENV = "production"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+  # Function size optimization
+  AWS_LAMBDA_JS_RUNTIME = "nodejs20.x"
+  ZISI_VERSION = "3"
+
+  # Build cache configuration
+  NETLIFY_CACHE_DIR = ".netlify/cache"
+
+[[plugins]]
+  # Plugin to cache dependencies between builds
+  package = "@netlify/plugin-functions-install-core"
+
+[[plugins]]
+  # Plugin for better error tracking
+  package = "@sentry/netlify-build-plugin"
+
+  [plugins.inputs]
+    sentryOrg = "proceed-dashboard"
+    sentryProject = "production"
+    sentryAuthToken = "$SENTRY_AUTH_TOKEN"
+
+[[plugins]]
+  # Plugin for lighthouse CI
+  package = "@netlify/plugin-lighthouse"
+
+  [plugins.inputs]
+    # Performance thresholds
+    performance = 0.9
+    accessibility = 0.9
+    best-practices = 0.9
+    seo = 0.9
+
+    # Audit URLs
+    audits = [
+      { path = "/", preset = "desktop" },
+      { path = "/", preset = "mobile" }
+    ]
+
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+
+  [headers.values]
+    # Security headers
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+    # CSP with nonce support for inline scripts
+    Content-Security-Policy = """
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com;
+      img-src 'self' data: https:;
+      connect-src 'self' /.netlify/functions/;
+      frame-ancestors 'none';
+      base-uri 'self';
+      form-action 'self';
+    """
+
+    # HSTS
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+
+# Cache control for static assets
+[[headers]]
+  for = "/static/*"
+
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+
+  [headers.values]
+    Cache-Control = "public, max-age=604800, must-revalidate"
+
+[[headers]]
+  for = "/*.css"
+
+  [headers.values]
+    Cache-Control = "public, max-age=604800, must-revalidate"
+
+[[headers]]
+  for = "/*.html"
+
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# API headers
+[[headers]]
+  for = "/.netlify/functions/*"
+
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Request-ID"
+    Access-Control-Max-Age = "86400"
+
+# Redirects and rewrites
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+[[redirects]]
+  from = "/openapi.json"
+  to = "/.netlify/functions/openapi"
+  status = 200
+
+# SPA fallback for client-side routing (if needed)
+[[redirects]]
+  from = "/*"
+  to = "/fareye-b2b-project-update.html"
+  status = 200
+  conditions = {Role = ["admin", "user"]}
+
+# Function configuration
+[functions]
+  # Directory for functions
+  directory = "netlify/functions"
+
+  # Node bundling for functions
+  node_bundler = "esbuild"
+
+  # External node modules (for native dependencies)
+  external_node_modules = ["@prisma/client", "prisma", "better-sqlite3"]
+
+  # Included files for functions
+  included_files = ["netlify/functions/**/*.json", "netlify/functions/**/*.prisma"]
+
+# Function-specific configuration
+[functions."dashboard"]
+  # Memory size (128-3008 MB)
+  memory = 512
+
+  # Timeout (1-26 seconds for synchronous, 900 for background)
+  timeout = 10
+
+  # Environment variables
+  environment = { DATABASE_URL = "$DATABASE_URL" }
+
+[functions."upload"]
+  memory = 1024
+  timeout = 26
+  environment = { MAX_FILE_SIZE = "10485760" }
+
+[functions."template"]
+  memory = 512
+  timeout = 10
+
+[functions."json-handler"]
+  memory = 512
+  timeout = 15
+
+# Development settings
+[dev]
+  command = "npm run dev:netlify"
+  port = 8888
+  targetPort = 3000
+  publish = "dist"
+  autoLaunch = true
+  framework = "#custom"
+  functionsSource = "netlify/functions"
+
+# Context-specific settings
+[context.production]
+  environment = {
+    NODE_ENV = "production",
+    DATABASE_PROVIDER = "turso",
+    ENABLE_MONITORING = "true",
+    LOG_LEVEL = "warn"
+  }
+
+[context.deploy-preview]
+  environment = {
+    NODE_ENV = "staging",
+    DATABASE_PROVIDER = "turso",
+    ENABLE_MONITORING = "true",
+    LOG_LEVEL = "info"
+  }
+
+  # Preview-specific build command
+  command = "npm run build:preview"
+
+[context.branch-deploy]
+  environment = {
+    NODE_ENV = "development",
+    DATABASE_PROVIDER = "turso",
+    LOG_LEVEL = "debug"
+  }
+
+# Split testing configuration
+[[context.production.edge_functions]]
+  path = "/*"
+  function = "traffic-split"
+
+# Rate limiting
+[[edge_functions]]
+  path = "/.netlify/functions/*"
+  function = "rate-limiter"
+
+# Edge function for geolocation-based routing
+[[edge_functions]]
+  path = "/"
+  function = "geo-router"
+
+# Analytics and monitoring
+[analytics]
+  enable = true
+
+# Forms (if needed for feedback)
+[forms]
+  enable = false
+
+# Identity (for auth if needed)
+[identity]
+  enable = false
+
+# Large media handling
+[large_media]
+  enable = false
+
+# Build settings for monorepo (if applicable)
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+  minify = true
+
+[build.processing.images]
+  compress = true

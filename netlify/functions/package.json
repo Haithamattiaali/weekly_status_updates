@@ -1,0 +1,19 @@
+{
+  "name": "proceed-netlify-functions",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@libsql/client": "^0.4.2",
+    "@netlify/functions": "^2.4.1",
+    "@sentry/node": "^7.91.0",
+    "busboy": "^1.6.0",
+    "exceljs": "^4.4.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/busboy": "^1.5.3",
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3"
+  }
+}
